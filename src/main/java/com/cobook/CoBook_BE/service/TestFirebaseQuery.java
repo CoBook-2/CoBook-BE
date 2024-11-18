@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class TestService {
+public class TestFirebaseQuery {
     public List<User> getUsers() throws Exception{
         List<User> list = new ArrayList<>();
         Firestore firestore = FirestoreClient.getFirestore();

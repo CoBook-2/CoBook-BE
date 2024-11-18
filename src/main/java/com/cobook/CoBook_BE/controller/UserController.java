@@ -1,7 +1,7 @@
 package com.cobook.CoBook_BE.controller;
 
 import com.cobook.CoBook_BE.model.User;
-import com.cobook.CoBook_BE.service.TestService;
+import com.cobook.CoBook_BE.service.TestFirebaseQuery;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,12 +15,12 @@ import java.util.List;
 @RequestMapping("test")
 public class UserController {
     User user;
-    private final TestService testService = new TestService();
+    private final TestFirebaseQuery testFirebaseQuery = new TestFirebaseQuery();
 
     // This returns first document contents from 'User' collection
     @GetMapping("/get")
     public ResponseEntity<User> getUser() throws Exception {
-        List<User> list = testService.getUsers();
+        List<User> list = testFirebaseQuery.getUsers();
         return ResponseEntity.ok(list.get(0));
     }
 }
