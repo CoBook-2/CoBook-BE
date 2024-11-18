@@ -1,6 +1,6 @@
 package com.cobook.CoBook_BE.controller;
 
-import com.cobook.CoBook_BE.model.User;
+import com.cobook.CoBook_BE.model.Space;
 import com.cobook.CoBook_BE.service.TestFirebaseQuery;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -12,15 +12,15 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("testUser")
-public class UserController {
-    User user;
+@RequestMapping("testSpace")
+public class SpaceController {
+    Space space;
+
     private final TestFirebaseQuery testFirebaseQuery = new TestFirebaseQuery();
 
-    // This returns first document contents from 'User' collection
-    @GetMapping("/getAllUser")
-    public ResponseEntity<List<User>> getAllUser() throws Exception {
-        List<User> list = testFirebaseQuery.getUsers();
+    @GetMapping("/getAllSpace")
+    public ResponseEntity<List<Space>> getAllSpace() throws Exception {
+        List<Space> list = testFirebaseQuery.getSpaces();
         return ResponseEntity.ok(list);
     }
 }
