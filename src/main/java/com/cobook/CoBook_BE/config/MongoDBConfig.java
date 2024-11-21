@@ -1,3 +1,4 @@
+/*
 package com.cobook.CoBook_BE.config;
 
 import org.springframework.context.annotation.Bean;
@@ -20,3 +21,4 @@ public class MongoDBConfig {
         return converter;
     }
 }
+*/
