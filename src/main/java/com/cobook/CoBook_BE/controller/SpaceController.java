@@ -1,13 +1,12 @@
 package com.cobook.CoBook_BE.controller;
 
-import com.cobook.CoBook_BE.model.Space;
+import com.cobook.CoBook_BE.model.*;
 import com.cobook.CoBook_BE.service.TestFirebaseQuery;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -21,6 +20,19 @@ public class SpaceController {
     @GetMapping("/getAllSpace")
     public ResponseEntity<List<Space>> getAllSpace() throws Exception {
         List<Space> list = testFirebaseQuery.getSpaces();
+        return ResponseEntity.ok(list);
+    }
+
+    @GetMapping("/findSpace/{sid}")
+    public ResponseEntity<List<Space>> findSpace(@PathVariable String sid) throws Exception {
+        List<Space> space = new ArrayList<>();
+        space.add(testFirebaseQuery.getSpace(sid));
+        return ResponseEntity.ok(space);
+    }
+
+    @GetMapping("/getSpaceMember/{sid}")
+    public ResponseEntity<List<SpaceMember>> getSpaceMember(@PathVariable String sid) throws Exception {
+        List<SpaceMember> list = testFirebaseQuery.getSpaceMembers(sid);
         return ResponseEntity.ok(list);
     }
 }
