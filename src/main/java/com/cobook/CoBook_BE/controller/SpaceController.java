@@ -35,4 +35,10 @@ public class SpaceController {
         List<SpaceMember> list = testFirebaseQuery.getSpaceMembers(sid);
         return ResponseEntity.ok(list);
     }
+
+    @GetMapping("/getReceipts/{sid}")
+    public ResponseEntity<List<Receipt>> getReceipts(@PathVariable String sid) throws Exception {
+        List<Receipt> list = testFirebaseQuery.getReceipts(sid);
+        return ResponseEntity.ok(list);
+    }
 }

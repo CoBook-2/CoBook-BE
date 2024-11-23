@@ -1,6 +1,5 @@
 package com.cobook.CoBook_BE.service;
 
-import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
 import com.google.firebase.cloud.FirestoreClient;
 import com.cobook.CoBook_BE.model.*;
@@ -8,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 @Service
 public class TestFirebaseQuery {
@@ -37,9 +37,8 @@ public class TestFirebaseQuery {
         return list;
     }
 
-    // Search specific space
-    public Space getSpace(String sid) throws Exception{
-        Space space;
+    public String findSpecificSpaceDoc(String sid) throws Exception {
+
         String documentId = null;
 
         List<QueryDocumentSnapshot> documents = spaceCollection.get().get().getDocuments();
@@ -50,11 +49,15 @@ public class TestFirebaseQuery {
             }
         }
 
-        if (documentId == null) {
-            return null;
-        }
+        return documentId;
+    }
 
-        space = spaceCollection.document(documentId).get().get().toObject(Space.class);
+    // Search specific space
+    public Space getSpace(String sid) throws Exception{
+        Space space;
+
+        space = spaceCollection.document(findSpecificSpaceDoc(sid))
+                .get().get().toObject(Space.class);
 
         return space;
     }
@@ -76,5 +79,32 @@ public class TestFirebaseQuery {
         }
 
         return list;
+    }
+
+    public List<Receipt> getReceipts(String sid) throws Exception{
+        List<Receipt> receiptList = new ArrayList<>();
+        List<Item> itemList = new ArrayList<>();
+        List<QueryDocumentSnapshot> receipts = spaceCollection.document(findSpecificSpaceDoc(sid))
+                .collection("Receipt")
+                .get().get().getDocuments();
+        List<QueryDocumentSnapshot> items = new ArrayList<>();
+        List<String> receiptIds = new ArrayList<>();
+
+        for (QueryDocumentSnapshot receipt : receipts) {
+            receiptList.add(receipt.toObject(Receipt.class));
+            receiptIds.add(receipt.getId());
+        }
+
+        for (String ids : receiptIds) {
+            for (QueryDocumentSnapshot item : spaceCollection.document(findSpecificSpaceDoc(sid)).collection("Receipt").document(ids).collection("Item").get().get().getDocuments()) {
+                itemList.add(item.toObject(Item.class));
+            }
+
+            for (Receipt receipt : receiptList) {
+                receipt.setItems(itemList);
+            }
+        }
+
+        return receiptList;
     }
 }
