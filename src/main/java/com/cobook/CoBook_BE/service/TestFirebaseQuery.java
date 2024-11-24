@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 @Service
 public class TestFirebaseQuery {
@@ -16,95 +15,99 @@ public class TestFirebaseQuery {
     CollectionReference userCollection = db.collection("User");
     CollectionReference spaceCollection = db.collection("Space");
 
+    // Search all users in DB
     public List<User> getUsers() throws Exception{
-        List<User> list = new ArrayList<>();
-
-        List<QueryDocumentSnapshot> documents = userCollection.get().get().getDocuments();
-        for (QueryDocumentSnapshot document : documents) {
-            list.add(document.toObject(User.class));
-        }
-        return list;
+        return getDocumentsFromCollection(userCollection, User.class);
     }
 
     // Search all spaces in DB
     public List<Space> getSpaces() throws Exception{
-        List<Space> list = new ArrayList<>();
-
-        List<QueryDocumentSnapshot> documents = spaceCollection.get().get().getDocuments();
-        for (QueryDocumentSnapshot document : documents) {
-            list.add(document.toObject(Space.class));
-        }
-        return list;
+        return getDocumentsFromCollection(spaceCollection, Space.class);
     }
 
-    public String findSpecificSpaceDoc(String sid) throws Exception {
+    // Find document id by field name and its value
+    public String findDocumentIdByField(CollectionReference collection, String field, String value) throws Exception {
 
-        String documentId = null;
+        List<QueryDocumentSnapshot> documents = getDocumentSnapshots(collection);
 
-        List<QueryDocumentSnapshot> documents = spaceCollection.get().get().getDocuments();
         for (QueryDocumentSnapshot document : documents) {
-            if (document.toObject(Space.class).sid.equals(sid)) {
-                documentId = document.getId();
-                break;
+            if (value.equals(document.getString(field))) {
+                return document.getId();
             }
         }
 
-        return documentId;
+        return null;
     }
 
     // Search specific space
     public Space getSpace(String sid) throws Exception{
-        Space space;
 
-        space = spaceCollection.document(findSpecificSpaceDoc(sid))
-                .get().get().toObject(Space.class);
+        String documentId = findDocumentIdByField(spaceCollection, "sid", sid);
 
-        return space;
+        return documentId != null ? spaceCollection.document(documentId).get().get().toObject(Space.class) : null;
     }
 
-    // Search space members in specific space
-    public List<SpaceMember> getSpaceMembers(String sid) throws Exception{
-        List<SpaceMember> list = new ArrayList<>();
-        String documentId;
-        List<QueryDocumentSnapshot> spaces = spaceCollection.get().get().getDocuments();
+    // Make data fields in documents into precise class in model package
+    public <T> List<T> getDocumentsFromCollection(CollectionReference collection, Class<T> clas) throws Exception{
 
-        for (QueryDocumentSnapshot document : spaces) {
-            if(document.toObject(Space.class).sid.equals(sid)) {
-                documentId = document.getId();
-                for (QueryDocumentSnapshot space : spaceCollection.document(documentId).collection("Member").get().get().getDocuments()) {
-                    list.add(space.toObject(SpaceMember.class));
-                }
-                break;
-            }
+        List<T> list = new ArrayList<>();
+        for (QueryDocumentSnapshot document : getDocumentSnapshots(collection)) {
+            list.add(document.toObject(clas));
         }
 
         return list;
     }
 
+    // Get child collection from specific parent collection
+    public CollectionReference getChildCollection(CollectionReference collection, String documentId, String collectionName) throws Exception{
+        return collection.document(documentId).collection(collectionName);
+    }
+
+    // Firebase document searching method
+    public List<QueryDocumentSnapshot> getDocumentSnapshots(CollectionReference collection) throws Exception{
+        return collection.get().get().getDocuments();
+    }
+
+    // Get 'items' from receipt in specific space
+    public List<Item> getItemsFromReceipt(String sid, String docId) throws Exception{
+
+        List<Item> items = new ArrayList<>();
+
+        for (QueryDocumentSnapshot item : getDocumentSnapshots(getChildCollection(spaceCollection, sid, "Receipt").document(docId).collection("Item"))) {
+            items.add(item.toObject(Item.class));
+        }
+
+        return items;
+    }
+
+    // Search space members in specific space
+    public List<SpaceMember> getSpaceMembers(String sid) throws Exception{
+
+        List<SpaceMember> list = new ArrayList<>();
+        String documentId = findDocumentIdByField(spaceCollection, "sid", sid);
+
+        return getDocumentsFromCollection(getChildCollection(spaceCollection, documentId, "Member"), SpaceMember.class);
+    }
+
+    // Get all receipts from specific space
     public List<Receipt> getReceipts(String sid) throws Exception{
-        List<Receipt> receiptList = new ArrayList<>();
-        List<Item> itemList = new ArrayList<>();
-        List<QueryDocumentSnapshot> receipts = spaceCollection.document(findSpecificSpaceDoc(sid))
-                .collection("Receipt")
-                .get().get().getDocuments();
-        List<QueryDocumentSnapshot> items = new ArrayList<>();
-        List<String> receiptIds = new ArrayList<>();
 
-        for (QueryDocumentSnapshot receipt : receipts) {
-            receiptList.add(receipt.toObject(Receipt.class));
-            receiptIds.add(receipt.getId());
+        String documentId = findDocumentIdByField(spaceCollection, "sid", sid);
+
+        List<String> ids = new ArrayList<>();
+        List<QueryDocumentSnapshot> receiptColl = getDocumentSnapshots(getChildCollection(spaceCollection, documentId, "Receipt"));
+        List<Receipt> receipts = getDocumentsFromCollection(getChildCollection(spaceCollection, documentId, "Receipt"), Receipt.class);
+
+        for (QueryDocumentSnapshot document : receiptColl) {
+            ids.add(document.getId());
         }
 
-        for (String ids : receiptIds) {
-            for (QueryDocumentSnapshot item : spaceCollection.document(findSpecificSpaceDoc(sid)).collection("Receipt").document(ids).collection("Item").get().get().getDocuments()) {
-                itemList.add(item.toObject(Item.class));
-            }
-
-            for (Receipt receipt : receiptList) {
-                receipt.setItems(itemList);
-            }
+        for (Receipt receipt : receipts) {
+            List<Item> items = getItemsFromReceipt(documentId, ids.getFirst());
+            receipt.setItems(items);
+            ids.removeFirst();
         }
 
-        return receiptList;
+        return receipts;
     }
 }
