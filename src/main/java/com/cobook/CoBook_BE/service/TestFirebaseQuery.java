@@ -1,5 +1,6 @@
 package com.cobook.CoBook_BE.service;
 
+import com.google.api.client.json.Json;
 import com.google.cloud.firestore.*;
 import com.google.firebase.cloud.FirestoreClient;
 import com.cobook.CoBook_BE.model.*;
@@ -109,5 +110,11 @@ public class TestFirebaseQuery {
         }
 
         return receipts;
+    }
+
+    public List<String> jsonParsing(Json image) {
+        List<String> list = new ArrayList<>();
+
+        return list;
     }
 }
