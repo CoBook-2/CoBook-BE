@@ -43,8 +43,10 @@ public class SpaceController {
         return ResponseEntity.ok(list);
     }
 
-    @GetMapping("/receive.json")
-    public ResponseEntity<String> getReceipts(@RequestBody Map<String, Object> ocrData) throws Exception {
-        return ResponseEntity.ok("잉 슈발");
+    @PostMapping
+    public ResponseEntity<?> receiveData(@RequestBody Map<String, Object> jsonData) {
+        System.out.println("Received JSON Data: " + jsonData);
+        // 데이터 처리 로직 추가
+        return ResponseEntity.ok(Map.of("message", "Data received successfully", "status", "success"));
     }
 }

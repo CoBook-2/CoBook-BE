@@ -17,7 +17,7 @@ public class Receipt {
     boolean processed;
     String purchased;
     int totalCost;
-    String write;
+    String writer;
 
     List<Item> items;
 }
