@@ -36,8 +36,10 @@ out/
 ### VS Code ###
 .vscode/
 
+
 # Ignore Firebase service account key
-src/main/resources/service-account-file.json
+#src/main/resources/service-account-file.json
 
 # Ignore Firebase configuration file
-src/main/java/com/cobook/CoBook_BE/config/FirebaseConfig.java
+#src/main/java/com/cobook/CoBook_BE/config/FirebaseConfig.java
+
