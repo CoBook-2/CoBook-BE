@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -34,5 +35,16 @@ public class SpaceController {
     public ResponseEntity<List<SpaceMember>> getSpaceMember(@PathVariable String sid) throws Exception {
         List<SpaceMember> list = testFirebaseQuery.getSpaceMembers(sid);
         return ResponseEntity.ok(list);
+    }
+
+    @GetMapping("/getReceipts/{sid}")
+    public ResponseEntity<List<Receipt>> getReceipts(@PathVariable String sid) throws Exception {
+        List<Receipt> list = testFirebaseQuery.getReceipts(sid);
+        return ResponseEntity.ok(list);
+    }
+
+    @GetMapping("/receive.json")
+    public ResponseEntity<String> getReceipts(@RequestBody Map<String, Object> ocrData) throws Exception {
+        return ResponseEntity.ok("잉 슈발");
     }
 }
