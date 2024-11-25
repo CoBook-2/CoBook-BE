@@ -15,8 +15,8 @@ public class FirebaseConfig {
     @PostConstruct
     public void initFirebase() throws IOException {
         FileInputStream serviceAccount =
-                new FileInputStream("src/main/resources/[serviceAccountKey].json"); // This will be change every time when you get private key
-                // Change file path before push into git: [serviceAccountKey].json
+                new FileInputStream("src/main/resources/service-account-file.json"); // This will be change every time when you get private key
+
         FirebaseOptions options = FirebaseOptions.builder()
                 .setCredentials(GoogleCredentials.fromStream(serviceAccount))
                 .setDatabaseUrl("https://ezbudget-test-3eb45-default-rtdb.firebaseio.com")

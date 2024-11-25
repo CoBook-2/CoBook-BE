@@ -35,3 +35,10 @@ out/
 
 ### VS Code ###
 .vscode/
+
+#service firebase key
+/src/main/resources/ezbudget-test-3eb45-firebase-adminsdk-fkwdw-5a5e9ccd65.json/
+
+#firebaseconfig
+C:\Users\chamsol\Documents\project\CoBook-BE\src\main\java\com\cobook\CoBook_BE\config\FirebaseConfig.java
+
