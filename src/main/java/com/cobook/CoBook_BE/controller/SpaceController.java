@@ -37,14 +37,16 @@ public class SpaceController {
         return ResponseEntity.ok(list);
     }
 
-    @GetMapping("/getReceipts/{sid}")
-    public ResponseEntity<List<Receipt>> getReceipts(@PathVariable String sid) throws Exception {
-        List<Receipt> list = testFirebaseQuery.getReceipts(sid);
-        return ResponseEntity.ok(list);
-    }
+    @PostMapping
+    public ResponseEntity<Map<String, Object>> receiveData(@RequestBody Map<String, Object> data) {
+        // Flask 서버에서 보낸 데이터를 출력
+        System.out.println("Received data from Flask server: " + data);
 
-    @GetMapping("/receive.json")
-    public ResponseEntity<String> getReceipts(@RequestBody Map<String, Object> ocrData) throws Exception {
-        return ResponseEntity.ok("잉 슈발");
+        // 데이터를 처리한 뒤 응답 생성 (필요에 따라 처리 로직 추가)
+        return ResponseEntity.ok(Map.of(
+                "status", "success",
+                "receivedData", data,
+                "message", "Data processed successfully in Spring"
+        ));
     }
 }

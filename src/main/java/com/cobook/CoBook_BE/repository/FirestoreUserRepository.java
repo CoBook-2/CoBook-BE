@@ -56,19 +56,29 @@ public class FirestoreUserRepository implements UserRepository {
 
     @Override
     public Optional<User> findByUserId(String userId) {
-        Firestore firestore = FirestoreClient.getFirestore();
-        DocumentReference documentReference = firestore.collection(COLLECTION_NAME).document(userId);
+        return Optional.empty();
+    }
 
-        ApiFuture<DocumentSnapshot> future = documentReference.get();
+    @Override
+    public Optional<User> findByUserIdAndPassword(String userId, String password) {
+        Firestore firestore = FirestoreClient.getFirestore();
+        CollectionReference collection = firestore.collection(COLLECTION_NAME);
+
+        // 모든 문서 가져오기
+        ApiFuture<QuerySnapshot> future = collection.get();
         try {
-            DocumentSnapshot document = future.get();
-            if (document.exists()) {
-                return Optional.of(document.toObject(User.class));
+            QuerySnapshot querySnapshot = future.get();
+            for (QueryDocumentSnapshot document : querySnapshot) {
+                User user = document.toObject(User.class);
+                // userId와 password가 일치하는지 확인
+                if (userId.equals(user.getUid()) && password.equals(user.getPw())) {
+                    return Optional.of(user); // 일치하는 사용자 발견 시 반환
+                }
             }
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
-        return Optional.empty();
+        return Optional.empty(); // 일치하는 사용자가 없을 경우
     }
 
     @Override
@@ -88,5 +98,4 @@ public class FirestoreUserRepository implements UserRepository {
         return userList;
     }
 }
-
 

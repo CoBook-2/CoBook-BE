@@ -91,8 +91,7 @@ public class TestFirebaseQuery {
     }
 
     // Get all receipts from specific space
-    public List<Receipt> getReceipts(String sid) throws Exception{
-
+    public List<Receipt> getReceipts(String sid) throws Exception {
         String documentId = findDocumentIdByField(spaceCollection, "sid", sid);
 
         List<String> ids = new ArrayList<>();
@@ -104,13 +103,14 @@ public class TestFirebaseQuery {
         }
 
         for (Receipt receipt : receipts) {
-            List<Item> items = getItemsFromReceipt(documentId, ids.getFirst());
+            List<Item> items = getItemsFromReceipt(documentId, ids.get(0));
             receipt.setItems(items);
-            ids.removeFirst();
+            ids.remove(0);
         }
 
         return receipts;
     }
+
 
     public List<String> jsonParsing(Json image) {
         List<String> list = new ArrayList<>();

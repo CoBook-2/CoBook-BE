@@ -1,4 +1,6 @@
+/*
 package com.cobook.CoBook_BE.repository;
+
 
 import com.cobook.CoBook_BE.model.User;
 
@@ -40,3 +42,5 @@ public class MemoryUserRepository implements UserRepository {
         store.clear();
     }
 }
+
+ */

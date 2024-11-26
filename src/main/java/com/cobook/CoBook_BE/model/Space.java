@@ -9,9 +9,10 @@ import lombok.Setter;
 @Getter
 //@Document(collection = "Demo")
 public class Space {
-//    @Id
+
     public String sid;
     public String sname;
     public String tag;
+    public int budget;
     public boolean approvalRequired;
 }
