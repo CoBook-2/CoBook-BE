@@ -4,10 +4,14 @@ import com.google.api.client.json.Json;
 import com.google.cloud.firestore.*;
 import com.google.firebase.cloud.FirestoreClient;
 import com.cobook.CoBook_BE.model.*;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class TestFirebaseQuery {
@@ -112,9 +116,16 @@ public class TestFirebaseQuery {
         return receipts;
     }
 
-    public List<String> jsonParsing(Json image) {
-        List<String> list = new ArrayList<>();
+    public Map<String, String> jsonParsing(Json image) {
+        Map<String, String> data = new HashMap<>();
+        String jsonString = jsonParsing(image).toString();
+        JsonObject obj = JsonParser.parseString(jsonString).getAsJsonObject();
+        data.put("first_word", obj.get("first_word").getAsString());
+        data.put("phone_number", obj.get("phone_number").getAsString());
+        data.put("date", obj.get("date").getAsString());
+        data.put("address", obj.get("address").getAsString());
+        data.put("processed_text", obj.get("processed_text").getAsString());
 
-        return list;
+        return data;
     }
 }
